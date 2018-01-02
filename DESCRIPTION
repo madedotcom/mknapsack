@@ -8,3 +8,10 @@ Description: Package is optimally packing items into multiple containers based o
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
+Suggests:
+  testthat,
+  lpSolved
+Imports:
+  data.table,
+  rcbc
+RoxygenNote: 6.0.1
