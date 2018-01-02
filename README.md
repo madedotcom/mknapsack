@@ -3,3 +3,5 @@
 
 
 # mknapsack
+
+This package can assign optimal containers to the list of items using lp_solve or rcbc libraries.
