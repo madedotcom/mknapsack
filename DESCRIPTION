@@ -10,7 +10,7 @@ Encoding: UTF-8
 LazyData: true
 Suggests:
   testthat,
-  lpSolved
+  lpSolve
 Imports:
   data.table,
   rcbc

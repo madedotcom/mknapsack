@@ -1,5 +1,4 @@
 library(data.table)
-library(lpSolve)
 
 #' Collapse function for the MOQ items
 #'
