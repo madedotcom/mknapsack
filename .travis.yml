@@ -4,6 +4,10 @@ language: r
 cache: packages
 sudo: false
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y coinor-libcbc-dev coinor-libclp-dev
+
 r_github_packages:
   - dirkschumacher/rcbc
   - jimhester/covr
