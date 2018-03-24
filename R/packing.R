@@ -5,28 +5,30 @@ library(ROI.plugin.cbc)
 
 #' Collapse function for the MOQ items
 #'
-#' Assigns earliest date to purchase order lines until first MOQ is reached within supplier-warehouse
+#' Combines items with MOQ greater than one to a single line that represents min amount that can be ordered
 #' @import data.table
 #'
 #' @export
 #' @param units data.table with following fields: sku, utility, volume, moq
 #' @return data.table with sku, utility, volume and units fields. first lines for each sku are grouped according to moq
-groupFirstMoq <- function(units) {
+group_moq <- function(units) {
   sku <- utility <- cnt <- group <- moq <- volume <- NULL # removes NOTEs in check
 
-  pol <- copy(units)
-  pol$units <- 1L
-  setorder(pol, sku, -utility)
+  dt <- copy(units)
+  dt$units <- 1L
+  setorder(dt, sku, -utility)
 
   # Sort by sku
-  setkeyv(pol, c("sku"))
-  pol[, cnt := 1:.N, by = sku]
+  setkeyv(dt, c("sku"))
+  dt[, cnt := 1:.N, by = sku]
 
   # Up to moq assign the same group.
-  pol[, group := as.integer(ifelse(cnt <= moq, 1, cnt)), by = sku]
+  dt[, group := as.integer(ifelse(cnt <= moq, 1, cnt)), by = sku]
 
   # Aggregate to moq group
-  res <- pol[, list(utility = sum(utility), volume = sum(volume), units = sum(units)), by = list(sku, group)]
+  res <- dt[, list(utility = sum(utility),
+                    volume = sum(volume),
+                    units = sum(units)), by = list(sku, group)]
   res[, moq := ifelse(group == 1, 1L, 0L)]
   res$group <- NULL
 
@@ -100,7 +102,11 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 }
 
 #' Solves knapsack problem with the library defined
-#' in KNAPSACK_SOLVE env variable, defaults to cbc package.
+#' in KNAPSACK_SOLVE env variable:
+#'  - cbc (default) - uses rcbc package
+#'  - lpsolve - uses lpSolve package
+#'
+#' @export
 #' @inherit mknapsack
 knapsack <- function(profit, volume, moq, cap) {
   do.call(solver(), list(profit = profit,

@@ -13,9 +13,9 @@ units <- merge(units, moqs, by = "sku", all.x = TRUE)
 
 context("moq group")
 
-describe("groupFirstMoq", {
+describe("group_moq", {
   it("combines data provided at unit level to MOQ level", {
-    units.combined <- groupFirstMoq(units)
+    units.combined <- group_moq(units)
 
     expect_identical(sum(units.combined$units), nrow(units),
                      label = "Check that number of units same as was given")
@@ -32,7 +32,7 @@ context("mknapsack")
 describe("mknapsack", {
   it("Generates vector of optimal containers for a given problem", {
     # Combine data provided at unit level to MOQ level
-    units.combined <- groupFirstMoq(units)
+    units.combined <- group_moq(units)
 
     # Get vector of optimal containers
     containers <- mknapsack(units.combined$utility,
@@ -72,7 +72,7 @@ describe("mknapsack", {
   })
   it("wit sold vector, sold items have highest priority", {
       # Combine data provided at unit level to MOQ level
-      units.combined <- groupFirstMoq(units)
+      units.combined <- group_moq(units)
 
       # Get vector of optimal containers
       containers <- mknapsack(profit = units.combined$utility,
@@ -111,7 +111,7 @@ describe("moq_constraint", {
      container that contains MOQ line or after", {
 
       # Combine data provided at unit level to MOQ level
-       units.combined <- groupFirstMoq(units)
+       units.combined <- group_moq(units)
        l <- length(units.combined$moq)
        moq.constraint.matrix <- moq_constraint(units.combined$moq)
        expect <- matrix(c(1, -1, rep(0, l - 2),

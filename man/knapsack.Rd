@@ -3,7 +3,9 @@
 \name{knapsack}
 \alias{knapsack}
 \title{Solves knapsack problem with the library defined
-in KNAPSACK_SOLVE env variable, defaults to cbc package.}
+in KNAPSACK_SOLVE env variable:
+ - cbc (default) - uses rcbc package
+ - lpsolve - uses lpSolve package}
 \usage{
 knapsack(profit, volume, moq, cap)
 }
@@ -21,5 +23,7 @@ vector with container numbers keeping the permutation of the original data
 }
 \description{
 Solves knapsack problem with the library defined
-in KNAPSACK_SOLVE env variable, defaults to cbc package.
+in KNAPSACK_SOLVE env variable:
+ - cbc (default) - uses rcbc package
+ - lpsolve - uses lpSolve package
 }
