@@ -10,6 +10,7 @@ before_install:
 
 r_github_packages:
   - dirkschumacher/rcbc
+  - dirkschumacher/ROI.plugin.cbc
   - jimhester/covr
 
 after_success:
