@@ -1,3 +1,4 @@
+#' @import ROI ROI.plugin.cbc
 library(data.table)
 library(ROI)
 library(ROI.plugin.cbc)

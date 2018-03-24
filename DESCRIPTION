@@ -13,5 +13,7 @@ Suggests:
   lpSolve
 Imports:
   data.table,
-  rcbc
+  ROI,
+  rcbc,
+  ROI.plugin.cbc
 RoxygenNote: 6.0.1
