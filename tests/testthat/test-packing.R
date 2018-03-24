@@ -145,7 +145,9 @@ test_that("item with MOQ is added first", {
   units.combined$container <- res
 
   # Aggregate solution to container
-  containers <- units.combined[, .(volume = sum(volume), utility = sum(utility)), by = container]
+  containers <- units.combined[, .(volume = sum(volume),
+                                   utility = sum(utility)),
+                               by = container]
 
   expect_lte(max(containers$volume), 65,
              label = "container volume does not exceed the limit")
@@ -157,10 +159,12 @@ test_that("item with MOQ is added first", {
 
   # Calculating the first container position for each moq/non-moq item
   moq.first <- tapply(res[moq == 1], units.combined$sku[moq == 1], min)
-  moq.first <- data.table(sku = names(moq.first), container.moq = moq.first)
+  moq.first <- data.table(sku = names(moq.first),
+                          container.moq = moq.first)
 
   non.moq.first <- tapply(res[moq != 1], units.combined$sku[moq != 1], min)
-  non.moq.first <- data.table(sku = names(non.moq.first), container = non.moq.first)
+  non.moq.first <- data.table(sku = names(non.moq.first),
+                              container = non.moq.first)
 
   # Making sure that moq container is less or equal to any non-moq container
   dt.check <- merge(moq.first, non.moq.first, by = "sku")
