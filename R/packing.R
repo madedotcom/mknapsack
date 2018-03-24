@@ -94,8 +94,8 @@ mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit
 }
 
 #' Deprecated: Optimal packing into multiple containers
-#' @noRd
 #' @export
+#' @inherit mknapsack
 getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
   .Deprecated("mknapsack")
   mknapsack(profit, volume, moq, cap, sold)
