@@ -12,7 +12,7 @@ optimal_containers(profit, volume, moq, cap = 65, sold = rep(0,
 
 \item{volume}{vector of item sizes in cubic meters}
 
-\item{moq}{vector of flags where 1 means that row contans MOQ quantity}
+\item{moq}{vector of flags where 1 means that row contans mininum order quantity (MOQ)}
 
 \item{cap}{size of the container in cubic meters}
 
@@ -33,7 +33,7 @@ units.combined <- data.table(unitsbro)
 moq <- units.combined$moq
 utility <- units.combined$utility
 volume <- units.combined$volume
-res <- getContainers(utility, volume, moq, 65)
+res <- optimal_containers(utility, volume, moq, 65)
 units.combined$container <- as.factor(res)
 #Aggregate solution to container
 containers <- units.combined[order(container), .(volume = sum(volume),

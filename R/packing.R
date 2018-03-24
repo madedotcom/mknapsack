@@ -100,7 +100,7 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 }
 
 #' Solves knapsack problem with the library defined
-#' in KNAPSACK_SOLVE env variable, defaults to lpSolve package.
+#' in KNAPSACK_SOLVE env variable, defaults to cbc package.
 #' @inherit optimal_containers
 solveKnapsack <- function(profit, volume, moq, cap) {
   do.call(solver(), list(profit = profit,
