@@ -117,13 +117,13 @@ knapsack <- function(profit, volume, moq, cap) {
 
 solver <- function() {
   name <- Sys.getenv("KNAPSACK_SOLVE", unset = "cbc")
-  get(paste0("knapsack", name))
+  get(paste0("knapsack.", name))
 }
 
 #' Solve knapsack problem with lpSolve package
 #' @noRd
 #' @inherit knapsack
-knapsack <- function(profit, volume, moq, cap) {
+knapsack.lpsolve <- function(profit, volume, moq, cap) {
 
   moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
