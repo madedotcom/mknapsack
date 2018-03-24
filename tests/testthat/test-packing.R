@@ -28,14 +28,14 @@ describe("groupFirstMoq", {
   })
 })
 
-context("optimal containers")
-describe("optimal_containers", {
+context("mknapsack")
+describe("mknapsack", {
   it("Generates vector of optimal containers for a given problem", {
     # Combine data provided at unit level to MOQ level
     units.combined <- groupFirstMoq(units)
 
     # Get vector of optimal containers
-    containers <- optimal_containers(units.combined$utility,
+    containers <- mknapsack(units.combined$utility,
                          units.combined$volume,
                          units.combined$moq,
                          65)
@@ -66,7 +66,7 @@ describe("optimal_containers", {
       volume <- 1.6
       units <- 33
       moq <- 1
-      containers <- optimal_containers(profit, volume, moq, 65)
+      containers <- mknapsack(profit, volume, moq, 65)
       expect_equal(containers, 1)
 
   })
@@ -75,7 +75,7 @@ describe("optimal_containers", {
       units.combined <- groupFirstMoq(units)
 
       # Get vector of optimal containers
-      containers <- optimal_containers(profit = units.combined$utility,
+      containers <- mknapsack(profit = units.combined$utility,
                                        volume = units.combined$volume,
                                        moq = units.combined$moq,
                                        cap = 65)
@@ -85,7 +85,7 @@ describe("optimal_containers", {
       # Adding the sold
       units.combined[, sold := 0]
       units.combined[4, sold := 1]
-      containers <- optimal_containers(profit = units.combined$utility,
+      containers <- mknapsack(profit = units.combined$utility,
                                        volume = units.combined$volume,
                                        moq  = units.combined$moq,
                                        cap = 65,
@@ -100,7 +100,7 @@ describe("optimal_containers", {
       units = c(300L, 300L, 300L, 300L)
       moq = c(1L, 1L, 1L, 1L)
 
-      containers <- optimal_containers(profit, volume, moq, 65)
+      containers <- mknapsack(profit, volume, moq, 65)
       expect_equal(containers, c(NA_integer_, NA_integer_, 1L, 2L))
   })
 })
@@ -141,7 +141,7 @@ test_that("item with MOQ is added first", {
   moq <- units.combined$moq
   profit <- units.combined$utility
   volume <- units.combined$volume
-  res <- optimal_containers(profit, volume, moq, 65)
+  res <- mknapsack(profit, volume, moq, 65)
   units.combined$container <- res
 
   # Aggregate solution to container

@@ -53,15 +53,15 @@ groupFirstMoq <- function(units) {
 #' library(data.table)
 #' units.combined <- data.table(unitsbro)
 #' moq <- units.combined$moq
-#' utility <- units.combined$utility
+#' profit <- units.combined$utility
 #' volume <- units.combined$volume
-#' res <- optimal_containers(utility, volume, moq, 65)
+#' res <- mknapsack(profit, volume, moq, 65)
 #' units.combined$container <- as.factor(res)
 #' #Aggregate solution to container
 #' containers <- units.combined[order(container), .(volume = sum(volume),
-#' utility = sum(utility)), by = container]
+#' profit = sum(profit)), by = container]
 #'
-optimal_containers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
+mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
   res <- rep(NA_integer_, length(profit))
   container <- 0
   ids <- 1:length(profit)
@@ -71,9 +71,9 @@ optimal_containers <- function(profit, volume, moq, cap = 65, sold = rep(0, leng
 
   repeat {
 
-    solution <- solveKnapsack(profit, volume, moq, cap)
+    solution <- knapsack(profit, volume, moq, cap)
 
-    if (sum(solution) == 0) break
+    if (sum(solution, na.rm = T) == 0) break
 
     container <- container + 1
     pack <- which(solution > 0) # permutations for current container
@@ -95,14 +95,14 @@ optimal_containers <- function(profit, volume, moq, cap = 65, sold = rep(0, leng
 #' @noRd
 #' @export
 getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
-  .Deprecated("optimal_containers")
-  optimal_containers(profit, volume, moq, cap, sold)
+  .Deprecated("mknapsack")
+  mknapsack(profit, volume, moq, cap, sold)
 }
 
 #' Solves knapsack problem with the library defined
 #' in KNAPSACK_SOLVE env variable, defaults to cbc package.
-#' @inherit optimal_containers
-solveKnapsack <- function(profit, volume, moq, cap) {
+#' @inherit mknapsack
+knapsack <- function(profit, volume, moq, cap) {
   do.call(solver(), list(profit = profit,
                          volume = volume,
                          moq = moq,
@@ -111,13 +111,13 @@ solveKnapsack <- function(profit, volume, moq, cap) {
 
 solver <- function() {
   name <- Sys.getenv("KNAPSACK_SOLVE", unset = "cbc")
-  get(paste0("solveKnapsack.", name))
+  get(paste0("knapsack", name))
 }
 
 #' Solve knapsack problem with lpSolve package
 #' @noRd
-#' @inherit solveKnapsack
-solveKnapsack.lpsolve <- function(profit, volume, moq, cap) {
+#' @inherit knapsack
+knapsack <- function(profit, volume, moq, cap) {
 
   moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
@@ -134,10 +134,10 @@ solveKnapsack.lpsolve <- function(profit, volume, moq, cap) {
 
 #' Solve knapsack problem with rcbc package
 #' @noRd
-#' @inherit solveKnapsack
+#' @inherit knapsack
 #' @import rcbc
 #' @seealso https://github.com/dirkschumacher/rcbc
-solveKnapsack.cbc <- function(profit, volume, moq, cap) {
+knapsack.cbc <- function(profit, volume, moq, cap) {
 
   n <- length(profit)
 
