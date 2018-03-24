@@ -55,7 +55,7 @@ groupFirstMoq <- function(units) {
 #' moq <- units.combined$moq
 #' utility <- units.combined$utility
 #' volume <- units.combined$volume
-#' res <- getContainers(utility, volume, moq, 65)
+#' res <- optimal_containers(utility, volume, moq, 65)
 #' units.combined$container <- as.factor(res)
 #' #Aggregate solution to container
 #' containers <- units.combined[order(container), .(volume = sum(volume),
@@ -101,7 +101,7 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 
 #' Solves knapsack problem with the library defined
 #' in KNAPSACK_SOLVE env variable, defaults to lpSolve package.
-#' @inherit getContainers
+#' @inherit optimal_containers
 solveKnapsack <- function(profit, volume, moq, cap) {
   do.call(solver(), list(profit = profit,
                          volume = volume,
