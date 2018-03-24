@@ -61,12 +61,13 @@ groupFirstMoq <- function(units) {
 #' containers <- units.combined[order(container), .(volume = sum(volume),
 #' utility = sum(utility)), by = container]
 #'
-getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
-  res <- rep(0L, length(profit))
+optimal_containers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
+  res <- rep(NA_integer_, length(profit))
   container <- 0
   ids <- 1:length(profit)
 
-  profit[sold > 0] <- 10000 # force sold product to be in the first container
+  # force sold product to be in the first container
+  profit[sold > 0] <- max(profit * volume) * 10
 
   repeat {
 
@@ -87,8 +88,15 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 
     if (length(profit) == 0) break
   }
-  res[res == 0] <- max(res) + 1
   return(res)
+}
+
+#' Deprecated: Optimal packing into multiple containers
+#' @noRd
+#' @export
+getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
+  .Deprecated("optimal_containers")
+  optimal_containers(profit, volume, moq, cap, sold)
 }
 
 #' Solves knapsack problem with the library defined
