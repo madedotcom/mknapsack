@@ -115,7 +115,7 @@ test_that("If sold vector is provided, pre-sold items have high priority", {
 
   # Get vector of optimal containers
   containers <- getContainers(units.combined$utility, units.combined$volume, units.combined$moq, 65)
-  expect_equal(containers[4], 3)
+  expect_true(containers[4] %in% c(3, 4)) # here behaviour of CBC and LP_Solve are different
 
   # Adding the sold
   units.combined[, sold := 0]

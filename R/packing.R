@@ -1,4 +1,6 @@
 library(data.table)
+library(ROI)
+library(ROI.plugin.cbc)
 
 #' Collapse function for the MOQ items
 #'
@@ -59,7 +61,6 @@ groupFirstMoq <- function(units) {
 #' utility = sum(utility)), by = container]
 #'
 getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
-
   res <- rep(0L, length(profit))
   container <- 0
   ids <- 1:length(profit)
@@ -67,7 +68,9 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
   profit[sold > 0] <- 10000 # force sold product to be in the first container
 
   repeat {
+
     solution <- solveKnapsack(profit, volume, moq, cap)
+
     if (sum(solution) == 0) break
 
     container <- container + 1
@@ -83,6 +86,7 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 
     if (length(profit) == 0) break
   }
+  res[res == 0] <- max(res) + 1
   return(res)
 }
 
@@ -90,22 +94,25 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 #' in KNAPSACK_SOLVE env variable, defaults to lpSolve package.
 #' @inherit getContainers
 solveKnapsack <- function(profit, volume, moq, cap) {
-  solver <- Sys.getenv("KNAPSACK_SOLVE", unset = "cbc_solve")
-  if (solver == "lp_solve") {
-    res <- solveKnapsack.LP(profit, volume, moq, cap)
-  }
-  else if (solver == "cbc_solve") {
-    res <- solveKnapsack.CBC(profit, volume, moq, cap)
-  }
-  return(res)
+  do.call(solver(), list(profit = profit,
+                         volume = volume,
+                         moq = moq,
+                         cap = cap))
+}
+
+solver <- function() {
+  name <- Sys.getenv("KNAPSACK_SOLVE", unset = "cbc")
+  get(paste0("solveKnapsack.", name))
 }
 
 #' Solve knapsack problem with lpSolve package
-#'
+#' @noRd
 #' @inherit solveKnapsack
-solveKnapsack.LP <- function(profit, volume, moq, cap) {
+solveKnapsack.lpsolve <- function(profit, volume, moq, cap) {
+
   moq.constraints <- getMoqConstraint(moq)
   moq.lines <- nrow(moq.constraints)
+
   mod <- lpSolve::lp(direction = "max",
             objective.in = profit,
             const.mat = rbind(volume, moq.constraints),
@@ -117,10 +124,12 @@ solveKnapsack.LP <- function(profit, volume, moq, cap) {
 }
 
 #' Solve knapsack problem with rcbc package
+#' @noRd
 #' @inherit solveKnapsack
 #' @import rcbc
 #' @seealso https://github.com/dirkschumacher/rcbc
-solveKnapsack.CBC <- function(profit, volume, moq, cap) {
+solveKnapsack.cbc <- function(profit, volume, moq, cap) {
+
   n <- length(profit)
 
   if (sum(volume) <= cap) {
@@ -133,22 +142,19 @@ solveKnapsack.CBC <- function(profit, volume, moq, cap) {
   # CBC solver produces out-of-bound solution if coefs are zero.
   volume[volume == 0] <- 1e-10
 
-  result <- cbc_solve(
-    obj = profit,
-    mat = rbind(volume, moq.constraints),
-    is_integer = rep.int(TRUE, n),
-    row_lb = c(0L, rep(0L, moq.lines)),
-    row_ub = c(cap, rep(1L, moq.lines)),
-    max = TRUE,
-    col_lb = rep.int(0L, n),
-    col_ub = rep.int(1L, n),
-    cbc_args = list(logLevel = 0, Sec = 60));
+  lp <- OP(objective = profit,
+           constraints = L_constraint(L = rbind(volume, moq.constraints),
+                                      dir = c("<=", rep(">=", moq.lines)),
+                                      rhs = c(cap, rep(0, moq.lines))),
+           maximum = TRUE,
+           types = rep("B", length(volume)))
 
-  res <- rcbc::column_solution(result)
+  mod <- ROI_solve(lp, "cbc", control = list(logLevel = 0, sec = 60))
+  res <- mod$solution
   res[is.na(res)] <- 0;
-  res[res >= 2] <- 0; # Values should be between 0 and 1
   res <- as.integer(round(res, 0))
-  return(res)
+  res[res >= 2] <- 0; # Values should be between 0 and 1
+  res
 }
 
 #' MOQ contstraint generator
@@ -174,7 +180,7 @@ getMoqConstraint <- function(moq) {
   }
   res[is.na(res)] <- 0
   res <- subset(res, subset = moq != 1L)
-  if(nrow(res) == 0) return(res)
+  if (nrow(res) == 0) return(res)
   res <- res[rowSums(res == 0) != ncol(res), ]
   return(res)
 }
