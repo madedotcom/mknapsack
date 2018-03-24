@@ -7,18 +7,6 @@ in KNAPSACK_SOLVE env variable, defaults to lpSolve package.}
 \usage{
 solveKnapsack(profit, volume, moq, cap)
 }
-\arguments{
-\item{profit}{vector with profit for item}
-
-\item{volume}{vector of item sizes in cubic meters}
-
-\item{moq}{vector of flags where 1 means that row contans MOQ quantity}
-
-\item{cap}{size of the container in cubic meters}
-}
-\value{
-vector with container numbers keeping the permutation of the original data
-}
 \description{
 Solves knapsack problem with the library defined
 in KNAPSACK_SOLVE env variable, defaults to lpSolve package.

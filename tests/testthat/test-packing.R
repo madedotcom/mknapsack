@@ -106,14 +106,14 @@ describe("optimal_containers", {
 })
 
 context("moq constraint")
-describe("getMoqConstraint", {
+describe("moq_constraint", {
   it("generates constraint matrix that forces individual items to be added in
      container that contains MOQ line or after", {
 
       # Combine data provided at unit level to MOQ level
        units.combined <- groupFirstMoq(units)
        l <- length(units.combined$moq)
-       moq.constraint.matrix <- getMoqConstraint(units.combined$moq)
+       moq.constraint.matrix <- moq_constraint(units.combined$moq)
        expect <- matrix(c(1, -1, rep(0, l - 2),
                           1, 0, -1, rep(0, l - 3),
                           1, 0, 0, -1, rep(0, l - 4),
@@ -124,13 +124,13 @@ describe("getMoqConstraint", {
   })
   it("returns zero matrix for non-moq problem", {
     moq <- c(0, 0, 0)
-    moq.constraint.matrix <- getMoqConstraint(moq)
+    moq.constraint.matrix <- moq_constraint(moq)
     expect_equal(nrow(moq.constraint.matrix), 0,
                  label = "Empty matrix returned if there are no MOQs")
   })
   it("returns empty constraint matrix if all items contain moq", {
     moq = c(1L, 1L, 1L, 1L)
-    res <- getMoqConstraint(moq)
+    res <- moq_constraint(moq)
     expect_equal(nrow(res), 0, label = "MOQ constraint is empty.")
   })
 })

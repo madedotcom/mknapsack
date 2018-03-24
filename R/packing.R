@@ -41,7 +41,7 @@ groupFirstMoq <- function(units) {
 #'
 #' @param profit vector with profit for item
 #' @param volume vector of item sizes in cubic meters
-#' @param moq vector of flags where 1 means that row contans MOQ quantity
+#' @param moq vector of flags where 1 means that row contans mininum order quantity (MOQ)
 #' @param cap size of the container in cubic meters
 #' @param sold vector with a number of items that were sold on demand
 #' @return vector with container numbers keeping the permutation of the original data
@@ -119,7 +119,7 @@ solver <- function() {
 #' @inherit solveKnapsack
 solveKnapsack.lpsolve <- function(profit, volume, moq, cap) {
 
-  moq.constraints <- getMoqConstraint(moq)
+  moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
 
   mod <- lpSolve::lp(direction = "max",
@@ -145,7 +145,7 @@ solveKnapsack.cbc <- function(profit, volume, moq, cap) {
     return(rep(1, n))
   }
 
-  moq.constraints <- getMoqConstraint(moq)
+  moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
 
   # CBC solver produces out-of-bound solution if coefs are zero.
@@ -166,7 +166,7 @@ solveKnapsack.cbc <- function(profit, volume, moq, cap) {
   res
 }
 
-#' MOQ contstraint generator
+#' Mininum Order Quantity (MOQ) contstraint generator
 #'
 #' Creates matrix of moq constraints for the LP optimisation.
 #' It is assumed that there is only one moq position per SKU and
@@ -175,7 +175,7 @@ solveKnapsack.cbc <- function(profit, volume, moq, cap) {
 #' @param moq flag that indicates that this position contains MOQ
 #' @return matrix that expesses the MOQ constraint:
 #'   non-MOQ item cannot be put into container that does not contain MOQ item
-getMoqConstraint <- function(moq) {
+moq_constraint <- function(moq) {
   sku <- cumsum(moq)
   res <- matrix(nrow = length(sku), ncol = length(sku))
   for (p in unique(sku)) {

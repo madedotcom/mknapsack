@@ -2,6 +2,7 @@
 
 export(getContainers)
 export(groupFirstMoq)
+export(optimal_containers)
 import(ROI)
 import(ROI.plugin.cbc)
 import(data.table)
