@@ -6,7 +6,7 @@ sudo: false
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y coinor-libcbc-dev coinor-libclp-dev
+  - sudo apt-get install -y coinor-libcbc-dev coinor-libclp-dev libglpk-dev
 
 r_packages:
   - lpSolve
