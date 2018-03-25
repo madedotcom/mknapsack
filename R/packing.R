@@ -1,7 +1,8 @@
 #' @import ROI ROI.plugin.cbc
+#' @importFrom assertthat assert_that
 suppressPackageStartupMessages({
+  library(assertthat)
   library(data.table)
-  library(ROI)
 })
 
 #' Collapse function for the MOQ items
@@ -113,8 +114,11 @@ knapsack <- function(profit, volume, moq, cap) {
   do.call(solver(), as.list(environment()))
 }
 
+#' gets solver name from the environment variable
+#' @noRd
 solver <- function() {
-  name <- Sys.getenv("KNAPSACK_SOLVE", unset = "cbc")
+  name <- Sys.getenv("KNAPSACK_SOLVE")
+  assert_that(name != "")
   get(paste0("knapsack.", name))
 }
 
