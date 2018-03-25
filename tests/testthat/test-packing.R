@@ -106,9 +106,8 @@ describe("mknapsack", {
 context("knapsask")
 describe("knapsask.lpsolve", {
   it("solves knapsack problem using lpsolve", {
-    library(lpSolve)
-    library(ROI.plugin.lpsolve)
     skip_if_not_installed("lpSolve")
+    library(lpSolve)
     profit = c(12, 40, 20, 1)
     volume = c(40, 10, 30, 60)
     units = c(5L, 1L, 30L, 20L)
