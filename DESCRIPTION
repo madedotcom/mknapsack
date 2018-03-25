@@ -10,8 +10,11 @@ Encoding: UTF-8
 LazyData: true
 Suggests:
   testthat,
-  lpSolve
+  lpSolve,
+  Rglpk,
+  ROI.plugin.glpk
 Imports:
+  assertthat,
   data.table,
   ROI,
   rcbc,

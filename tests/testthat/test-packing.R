@@ -107,6 +107,7 @@ context("knapsask")
 describe("knapsask.lpsolve", {
   it("solves knapsack problem using lpsolve", {
     skip_if_not_installed("lpSolve")
+    library(lpSolve)
     profit = c(12, 40, 20, 1)
     volume = c(40, 10, 30, 60)
     units = c(5L, 1L, 30L, 20L)
@@ -135,7 +136,6 @@ describe("knapsask.glpk", {
   it("solves knapsack problem using glpk", {
     skip_if_not_installed("Rglpk")
     skip_if_not_installed("ROI.plugin.glpk")
-
     profit = c(12, 40, 20, 1)
     volume = c(40, 10, 30, 60)
     units = c(5L, 1L, 30L, 20L)

@@ -1,7 +1,8 @@
 #' @import ROI ROI.plugin.cbc
+#' @importFrom assertthat assert_that
 suppressPackageStartupMessages({
+  library(assertthat)
   library(data.table)
-  library(ROI)
 })
 
 #' Collapse function for the MOQ items
@@ -94,14 +95,6 @@ mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit
   return(res)
 }
 
-#' Deprecated: Optimal packing into multiple containers
-#' @export
-#' @inherit mknapsack
-getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
-  .Deprecated("mknapsack")
-  mknapsack(profit, volume, moq, cap, sold)
-}
-
 #' Solves knapsack problem with the library defined
 #' in KNAPSACK_SOLVE env variable:
 #'  - cbc (default) - uses rcbc package
@@ -113,8 +106,11 @@ knapsack <- function(profit, volume, moq, cap) {
   do.call(solver(), as.list(environment()))
 }
 
+#' gets solver name from the environment variable
+#' @noRd
 solver <- function() {
-  name <- Sys.getenv("KNAPSACK_SOLVE", unset = "cbc")
+  name <- Sys.getenv("KNAPSACK_SOLVE")
+  assert_that(name != "")
   get(paste0("knapsack.", name))
 }
 
