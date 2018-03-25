@@ -109,10 +109,7 @@ getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(pr
 #' @export
 #' @inherit mknapsack
 knapsack <- function(profit, volume, moq, cap) {
-  do.call(solver(), list(profit = profit,
-                         volume = volume,
-                         moq = moq,
-                         cap = cap))
+  do.call(solver(), as.list(environment()))
 }
 
 solver <- function() {
