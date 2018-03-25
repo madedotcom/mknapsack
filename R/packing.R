@@ -95,14 +95,6 @@ mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit
   return(res)
 }
 
-#' Deprecated: Optimal packing into multiple containers
-#' @export
-#' @inherit mknapsack
-getContainers <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
-  .Deprecated("mknapsack")
-  mknapsack(profit, volume, moq, cap, sold)
-}
-
 #' Solves knapsack problem with the library defined
 #' in KNAPSACK_SOLVE env variable:
 #'  - cbc (default) - uses rcbc package
