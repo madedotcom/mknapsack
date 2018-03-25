@@ -2,7 +2,7 @@
 % Please edit documentation in R/packing.R
 \name{getContainers}
 \alias{getContainers}
-\title{Optimal packing into multiple containers}
+\title{Deprecated: Optimal packing into multiple containers}
 \usage{
 getContainers(profit, volume, moq, cap = 65, sold = rep(0, length(profit)))
 }
@@ -11,7 +11,7 @@ getContainers(profit, volume, moq, cap = 65, sold = rep(0, length(profit)))
 
 \item{volume}{vector of item sizes in cubic meters}
 
-\item{moq}{vector of flags where 1 means that row contans MOQ quantity}
+\item{moq}{vector of flags where 1 means that row contans mininum order quantity (MOQ)}
 
 \item{cap}{size of the container in cubic meters}
 
@@ -21,21 +21,5 @@ getContainers(profit, volume, moq, cap = 65, sold = rep(0, length(profit)))
 vector with container numbers keeping the permutation of the original data
 }
 \description{
-Gets containers based on the utility of individual items, their volume and container size
-}
-\examples{
-
-# Calculate the optimal containers summary for a sample dataset
-data(unitsbro)
-library(data.table)
-units.combined <- data.table(unitsbro)
-moq <- units.combined$moq
-utility <- units.combined$utility
-volume <- units.combined$volume
-res <- getContainers(utility, volume, moq, 65)
-units.combined$container <- as.factor(res)
-#Aggregate solution to container
-containers <- units.combined[order(container), .(volume = sum(volume),
-utility = sum(utility)), by = container]
-
+Deprecated: Optimal packing into multiple containers
 }
