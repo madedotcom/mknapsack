@@ -140,8 +140,25 @@ knapsack.lpsolve <- function(profit, volume, moq, cap) {
 #' @inherit knapsack
 #' @import rcbc
 #' @seealso https://github.com/dirkschumacher/rcbc
+#' @seealso https://github.com/dirkschumacher/ROI.plugin.cbc
 knapsack.cbc <- function(profit, volume, moq, cap) {
+  # CBC solver produces out-of-bound solution if coefs are zero.
+  volume[volume == 0] <- 1e-10
+  arguments <- as.list(environment())
+  arguments <- append(arguments,
+                      list(solver = "cbc",
+                          control = list(logLevel = 0, sec = 60)))
+  do.call(knapsack.roi, arguments)
+}
 
+#' Solve knapsack problem via ROI package interface
+#' @noRd
+#' @inherit knapsack
+#' @param solver code for the library that will be used to solve a problem
+#' @inheritParams ROI::ROI_solve
+#' @import ROI
+#' @seealso http://r-forge.r-project.org/projects/roi
+knapsack.roi <- function(profit, volume, moq, cap, solver, control = list()) {
   n <- length(profit)
 
   if (sum(volume) <= cap) {
@@ -151,9 +168,6 @@ knapsack.cbc <- function(profit, volume, moq, cap) {
   moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
 
-  # CBC solver produces out-of-bound solution if coefs are zero.
-  volume[volume == 0] <- 1e-10
-
   lp <- OP(objective = profit,
            constraints = L_constraint(L = rbind(volume, moq.constraints),
                                       dir = c("<=", rep(">=", moq.lines)),
@@ -161,7 +175,7 @@ knapsack.cbc <- function(profit, volume, moq, cap) {
            maximum = TRUE,
            types = rep("B", length(volume)))
 
-  mod <- ROI_solve(lp, "cbc", control = list(logLevel = 0, sec = 60))
+  mod <- ROI_solve(lp, solver, control = control)
   res <- mod$solution
   res[is.na(res)] <- 0;
   res <- as.integer(round(res, 0))
