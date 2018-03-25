@@ -8,6 +8,11 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y coinor-libcbc-dev coinor-libclp-dev
 
+r_packages:
+  - lpSolve
+  - Rglpk
+  - ROI.plugin.glpk
+
 r_github_packages:
   - dirkschumacher/rcbc
   - dirkschumacher/ROI.plugin.cbc
