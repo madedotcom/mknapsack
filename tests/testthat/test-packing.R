@@ -1,7 +1,5 @@
 library(data.table)
 
-
-
 # remove false warning related to data.table fields
 container <- container.moq <- NULL
 
@@ -70,7 +68,7 @@ describe("mknapsack", {
       expect_equal(containers, 1)
 
   })
-  it("wit sold vector, sold items have highest priority", {
+  it("with sold vector, sold items have highest priority", {
       # Combine data provided at unit level to MOQ level
       units.combined <- group_moq(units)
 
@@ -105,12 +103,53 @@ describe("mknapsack", {
   })
 })
 
-context("moq constraint")
-describe("moq_constraint", {
-  it("generates constraint matrix that forces individual items to be added in
-     container that contains MOQ line or after", {
+context("knapsask")
+describe("knapsask.lpsolve", {
+  it("solves knapsack problem using lpsolve", {
+    skip_if_not_installed("lpSolve")
+    profit = c(12, 40, 20, 1)
+    volume = c(40, 10, 30, 60)
+    units = c(5L, 1L, 30L, 20L)
+    moq = c(1L, 1L, 1L, 1L)
+    res <- knapsack.lpsolve(profit, volume, moq, 65)
+    expected <- c(0L, 1L, 1L, 0L)
+    expect_equal(res, expected,
+                 label = "knapsack solution by lpsolve is correct")
+  })
+})
 
-      # Combine data provided at unit level to MOQ level
+describe("knapsask.cbc", {
+  it("solves knapsack problem using cbc", {
+    profit = c(12, 40, 20, 1)
+    volume = c(40, 10, 30, 60)
+    units = c(5L, 1L, 30L, 20L)
+    moq = c(1L, 1L, 1L, 1L)
+    res <- knapsack.cbc(profit, volume, moq, 65)
+    expected <- c(0L, 1L, 1L, 0L)
+    expect_equal(res, expected,
+                 label = "knapsack solution by cbc is correct")
+  })
+})
+
+describe("knapsask.glpk", {
+  it("solves knapsack problem using glpk", {
+    skip_if_not_installed("Rglpk")
+    skip_if_not_installed("ROI.plugin.glpk")
+
+    profit = c(12, 40, 20, 1)
+    volume = c(40, 10, 30, 60)
+    units = c(5L, 1L, 30L, 20L)
+    moq = c(1L, 1L, 1L, 1L)
+    res <- knapsack.glpk(profit, volume, moq, 65)
+    expected <- c(0L, 1L, 1L, 0L)
+    expect_equal(res, expected,
+                 label = "knapsack solution by cbc is correct")
+  })
+})
+
+describe("at contains MOQ line or after", {
+  it("combines data provided at unit level to MOQ level", {
+
        units.combined <- group_moq(units)
        l <- length(units.combined$moq)
        moq.constraint.matrix <- moq_constraint(units.combined$moq)

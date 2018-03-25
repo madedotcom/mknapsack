@@ -1,7 +1,8 @@
 #' @import ROI ROI.plugin.cbc
-library(data.table)
-library(ROI)
-library(ROI.plugin.cbc)
+suppressPackageStartupMessages({
+  library(data.table)
+  library(ROI)
+})
 
 #' Collapse function for the MOQ items
 #'
@@ -151,6 +152,17 @@ knapsack.cbc <- function(profit, volume, moq, cap) {
   do.call(knapsack.roi, arguments)
 }
 
+#' Solve knapsack problem with glpk
+#' @noRd
+#' @inherit knapsack
+#' @seealso https://www.gnu.org/software/glpk/
+knapsack.glpk <- function(profit, volume, moq, cap) {
+  arguments <- as.list(environment())
+  arguments <- append(arguments,
+                      list(solver = "glpk"))
+  do.call(knapsack.roi, arguments)
+
+}
 #' Solve knapsack problem via ROI package interface
 #' @noRd
 #' @inherit knapsack
