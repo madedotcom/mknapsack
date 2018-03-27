@@ -1,4 +1,5 @@
 library(data.table)
+library(mockery)
 
 # remove false warning related to data.table fields
 container <- container.moq <- NULL
@@ -121,6 +122,12 @@ describe("knapsask.lpsolve", {
 
 describe("knapsask.cbc", {
   it("solves knapsack problem using cbc", {
+    skip_if_not_installed("ROI.plugin.cbc")
+    skip_if_not_installed("ROI")
+    skip_if_not_installed("rcbc")
+    library(rcbc)
+    library(ROI.plugin.cbc)
+    library(ROI)
     profit = c(12, 40, 20, 1)
     volume = c(40, 10, 30, 60)
     units = c(5L, 1L, 30L, 20L)
@@ -136,6 +143,10 @@ describe("knapsask.glpk", {
   it("solves knapsack problem using glpk", {
     skip_if_not_installed("Rglpk")
     skip_if_not_installed("ROI.plugin.glpk")
+    skip_if_not_installed("ROI")
+    library(Rglpk)
+    library(ROI.plugin.glpk)
+    library(ROI)
     profit = c(12, 40, 20, 1)
     volume = c(40, 10, 30, 60)
     units = c(5L, 1L, 30L, 20L)
@@ -144,6 +155,22 @@ describe("knapsask.glpk", {
     expected <- c(0L, 1L, 1L, 0L)
     expect_equal(res, expected,
                  label = "knapsack solution by cbc is correct")
+  })
+})
+
+describe("solver", {
+  it("calls correct method based on the option value", {
+    solver <- getOption("mknapsack.solver")
+    knapsack.glpk_mock <- mock()
+    with_mock(
+      `mknapsack::knapsack.glpk` = knapsack.glpk_mock,
+      {
+        options("mknapsack.solver" = "glpk")
+        mknapsack(1, 1, 0)
+        mockery::expect_called(knapsack.glpk_mock, 1)
+      }
+    )
+    options(mknapsack.solver = solver)
   })
 })
 

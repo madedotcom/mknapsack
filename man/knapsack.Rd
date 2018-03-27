@@ -3,7 +3,7 @@
 \name{knapsack}
 \alias{knapsack}
 \title{Solves knapsack problem with the library defined
-in KNAPSACK_SOLVE env variable:
+in knapsack.solver option:
  - cbc (default) - uses rcbc package
  - lpsolve - uses lpSolve package}
 \usage{
@@ -23,7 +23,7 @@ vector with container numbers keeping the permutation of the original data
 }
 \description{
 Solves knapsack problem with the library defined
-in KNAPSACK_SOLVE env variable:
+in knapsack.solver option:
  - cbc (default) - uses rcbc package
  - lpsolve - uses lpSolve package
 }
