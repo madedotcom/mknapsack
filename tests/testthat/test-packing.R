@@ -163,7 +163,7 @@ describe("solver", {
     solver <- getOption("mknapsack.solver")
     knapsack.glpk_mock <- mock()
     with_mock(
-      knapsack.glpk = knapsack.glpk_mock,
+      `mknapsack::knapsack.glpk` = knapsack.glpk_mock,
       {
         options("mknapsack.solver" = "glpk")
         mknapsack(1, 1, 0)
