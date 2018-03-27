@@ -4,7 +4,7 @@
 
 # mknapsack
 
-This package assigns items optimally to containers using Mixed Integer Linear Programming (MILP) solver of your choice.
+This package solves [multiple knapsack problem](https://en.wikipedia.org/wiki/List_of_knapsack_problems) by assigning items optimally to knapsacks using Mixed Integer Linear Programming (MILP) solver of choice.
 
 
 ## Definition of the mknapsack problem
