@@ -10,13 +10,13 @@ Encoding: UTF-8
 LazyData: true
 Suggests:
   testthat,
-  lpSolve,
   Rglpk,
-  ROI.plugin.glpk
+  rcbc,
+  ROI,
+  ROI.plugin.glpk,
+  ROI.plugin.cbc
 Imports:
   assertthat,
   data.table,
-  ROI,
-  rcbc,
-  ROI.plugin.cbc
+  lpSolve
 RoxygenNote: 6.0.1

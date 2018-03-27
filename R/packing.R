@@ -1,4 +1,4 @@
-#' @import ROI ROI.plugin.cbc
+
 #' @importFrom assertthat assert_that
 suppressPackageStartupMessages({
   library(assertthat)
@@ -96,7 +96,7 @@ mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit
 }
 
 #' Solves knapsack problem with the library defined
-#' in KNAPSACK_SOLVE env variable:
+#' in knapsack.solver option:
 #'  - cbc (default) - uses rcbc package
 #'  - lpsolve - uses lpSolve package
 #'
@@ -109,7 +109,7 @@ knapsack <- function(profit, volume, moq, cap) {
 #' gets solver name from the environment variable
 #' @noRd
 solver <- function() {
-  name <- Sys.getenv("KNAPSACK_SOLVE")
+  name <- getOption("mknapsack.solver")
   assert_that(name != "")
   get(paste0("knapsack.", name))
 }
@@ -135,7 +135,6 @@ knapsack.lpsolve <- function(profit, volume, moq, cap) {
 #' Solve knapsack problem with rcbc package
 #' @noRd
 #' @inherit knapsack
-#' @import rcbc
 #' @seealso https://github.com/dirkschumacher/rcbc
 #' @seealso https://github.com/dirkschumacher/ROI.plugin.cbc
 knapsack.cbc <- function(profit, volume, moq, cap) {
@@ -164,7 +163,6 @@ knapsack.glpk <- function(profit, volume, moq, cap) {
 #' @inherit knapsack
 #' @param solver code for the library that will be used to solve a problem
 #' @inheritParams ROI::ROI_solve
-#' @import ROI
 #' @seealso http://r-forge.r-project.org/projects/roi
 knapsack.roi <- function(profit, volume, moq, cap, solver, control = list()) {
   n <- length(profit)
@@ -176,14 +174,14 @@ knapsack.roi <- function(profit, volume, moq, cap, solver, control = list()) {
   moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
 
-  lp <- OP(objective = profit,
-           constraints = L_constraint(L = rbind(volume, moq.constraints),
+  lp <- ROI::OP(objective = profit,
+           constraints = ROI::L_constraint(L = rbind(volume, moq.constraints),
                                       dir = c("<=", rep(">=", moq.lines)),
                                       rhs = c(cap, rep(0, moq.lines))),
            maximum = TRUE,
            types = rep("B", length(volume)))
 
-  mod <- ROI_solve(lp, solver, control = control)
+  mod <- ROI::ROI_solve(lp, solver, control = control)
   res <- mod$solution
   res[is.na(res)] <- 0;
   res <- as.integer(round(res, 0))
