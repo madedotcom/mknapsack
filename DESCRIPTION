@@ -3,7 +3,7 @@ Type: Package
 Title: Multiple knapsack problem solver
 Version: 0.1.0
 Author: Bulat Yapparov
-Maintainer: <bulat.yapparov@made.com>
+Maintainer: Bulat Yapparov <bulat.yapparov@made.com>
 Description: Package is optimally packing items into multiple knapsacks based on the profit and volume.
 License: GPL-2
 Encoding: UTF-8
