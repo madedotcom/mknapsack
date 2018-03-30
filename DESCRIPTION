@@ -1,11 +1,15 @@
 Package: mknapsack
 Type: Package
-Title: Multiple knapsack problem solver
+Title: Multiple Knapsack Problem Solver
 Version: 0.1.0
-Author: Bulat Yapparov
-Maintainer: Bulat Yapparov <bulat.yapparov@made.com>
+Authors@R: c(
+  person("Bulat", "Yapparov", email = "bulat.yapparov@made.com", role = c("aut", "cre")),
+  person("MADE.com", role = "cph")
+  )
 Description: Package is optimally packing items into multiple knapsacks based on the profit and volume.
 License: GPL-2
+URL: https://github.com/madedotcom/mknapsack
+BugReports: https://github.com/madedotcom/mknapsack/issues
 Encoding: UTF-8
 LazyData: true
 Suggests:
