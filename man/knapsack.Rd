@@ -7,14 +7,15 @@ in knapsack.solver option:
  - cbc (default) - uses rcbc package
  - lpsolve - uses lpSolve package}
 \usage{
-knapsack(profit, volume, moq, cap)
+knapsack(profit, volume, moq = rep(0, length(profit)), cap = 65)
 }
 \arguments{
 \item{profit}{vector with profit for item}
 
 \item{volume}{vector of item sizes in cubic meters}
 
-\item{moq}{vector of flags where 1 means that row contans mininum order quantity (MOQ)}
+\item{moq}{vector of flags where 1 means that row contans mininum order quantity (MOQ).
+Defaults to zero vector matching profit in length.}
 
 \item{cap}{size of the container in cubic meters}
 }

@@ -109,7 +109,9 @@ mknapsack <- function(profit, volume,
 #'
 #' @export
 #' @inherit mknapsack
-knapsack <- function(profit, volume, moq, cap) {
+knapsack <- function(profit, volume,
+                     moq = rep(0, length(profit)),
+                     cap = 65) {
   do.call(solver(), as.list(environment()))
 }
 

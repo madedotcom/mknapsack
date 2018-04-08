@@ -4,14 +4,16 @@
 \alias{mknapsack}
 \title{Optimal packing into multiple containers}
 \usage{
-mknapsack(profit, volume, moq, cap = 65, sold = rep(0, length(profit)))
+mknapsack(profit, volume, moq = rep(0, length(profit)), cap = 65,
+  sold = rep(0, length(profit)))
 }
 \arguments{
 \item{profit}{vector with profit for item}
 
 \item{volume}{vector of item sizes in cubic meters}
 
-\item{moq}{vector of flags where 1 means that row contans mininum order quantity (MOQ)}
+\item{moq}{vector of flags where 1 means that row contans mininum order quantity (MOQ).
+Defaults to zero vector matching profit in length.}
 
 \item{cap}{size of the container in cubic meters}
 
