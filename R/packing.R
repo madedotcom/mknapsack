@@ -47,7 +47,8 @@ group_moq <- function(units) {
 #'
 #' @param profit vector with profit for item
 #' @param volume vector of item sizes in cubic meters
-#' @param moq vector of flags where 1 means that row contans mininum order quantity (MOQ)
+#' @param moq vector of flags where 1 means that row contans mininum order quantity (MOQ).
+#'     Defaults to zero vector matching profit in length.
 #' @param cap size of the container in cubic meters
 #' @param sold vector with a number of items that were sold on demand
 #' @return vector with container numbers keeping the permutation of the original data
@@ -67,13 +68,18 @@ group_moq <- function(units) {
 #' containers <- units.combined[order(container), .(volume = sum(volume),
 #' profit = sum(profit)), by = container]
 #'
-mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit))) {
+mknapsack <- function(profit, volume,
+                      moq = rep(0, length(profit)),
+                      cap = 65,
+                      sold = rep(0, length(profit))) {
+
+  assert_that(is.numeric(profit), is.numeric(volume))
   res <- rep(NA_integer_, length(profit))
   container <- 0
   ids <- 1:length(profit)
 
-  # force sold product to be in the first container
-  profit[sold > 0] <- max(profit * volume) * 10
+  # force sold items to be in the top container(s)
+  profit[sold > 0] <- max(profit / volume) * volume[sold > 0] * 10
 
   repeat {
     solution <- knapsack(profit, volume, moq, cap)
