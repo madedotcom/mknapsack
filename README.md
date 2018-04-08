@@ -38,7 +38,7 @@ Solve problem with [CBC COIN-OR](https://projects.coin-or.org/Cbc) solver:
 ```R
 devtools::install_github("dirkschumacher/rcbc")
 devtools::install_github("dirkschumacher/ROI.plugin.cbc")
-devtools::install_github("byapparov/mknapsack")
+devtools::install_github("madedotcom/mknapsack")
 library(rcbc)
 library(ROI)
 library(ROI.plugin.cbc)
