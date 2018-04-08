@@ -28,9 +28,11 @@ group_moq <- function(units) {
   dt[, group := as.integer(ifelse(cnt <= moq, 1, cnt)), by = sku]
 
   # Aggregate to moq group
-  res <- dt[, list(utility = sum(utility),
-                    volume = sum(volume),
-                    units = sum(units)), by = list(sku, group)]
+  res <- dt[, list(
+    utility = sum(utility),
+    volume = sum(volume),
+    units = sum(units)
+  ), by = list(sku, group)]
   res[, moq := ifelse(group == 1, 1L, 0L)]
   res$group <- NULL
 
@@ -74,7 +76,6 @@ mknapsack <- function(profit, volume, moq, cap = 65, sold = rep(0, length(profit
   profit[sold > 0] <- max(profit * volume) * 10
 
   repeat {
-
     solution <- knapsack(profit, volume, moq, cap)
 
     if (sum(solution, na.rm = T) == 0) break
@@ -118,16 +119,17 @@ solver <- function() {
 #' @noRd
 #' @inherit knapsack
 knapsack.lpsolve <- function(profit, volume, moq, cap) {
-
   moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
 
-  mod <- lpSolve::lp(direction = "max",
-            objective.in = profit,
-            const.mat = rbind(volume, moq.constraints),
-            const.dir = c("<=", rep(">=", moq.lines)),
-            const.rhs = c(cap, rep(0, moq.lines)),
-            all.bin = TRUE)
+  mod <- lpSolve::lp(
+    direction = "max",
+    objective.in = profit,
+    const.mat = rbind(volume, moq.constraints),
+    const.dir = c("<=", rep(">=", moq.lines)),
+    const.rhs = c(cap, rep(0, moq.lines)),
+    all.bin = TRUE
+  )
   res <- mod$solution
   return(res)
 }
@@ -141,9 +143,13 @@ knapsack.cbc <- function(profit, volume, moq, cap) {
   # CBC solver produces out-of-bound solution if coefs are zero.
   volume[volume == 0] <- 1e-10
   arguments <- as.list(environment())
-  arguments <- append(arguments,
-                      list(solver = "cbc",
-                          control = list(logLevel = 0, sec = 60)))
+  arguments <- append(
+    arguments,
+    list(
+      solver = "cbc",
+      control = list(logLevel = 0, sec = 60)
+    )
+  )
   do.call(knapsack.roi, arguments)
 }
 
@@ -153,10 +159,11 @@ knapsack.cbc <- function(profit, volume, moq, cap) {
 #' @seealso https://www.gnu.org/software/glpk/
 knapsack.glpk <- function(profit, volume, moq, cap) {
   arguments <- as.list(environment())
-  arguments <- append(arguments,
-                      list(solver = "glpk"))
+  arguments <- append(
+    arguments,
+    list(solver = "glpk")
+  )
   do.call(knapsack.roi, arguments)
-
 }
 #' Solve knapsack problem via ROI package interface
 #' @noRd
@@ -174,18 +181,22 @@ knapsack.roi <- function(profit, volume, moq, cap, solver, control = list()) {
   moq.constraints <- moq_constraint(moq)
   moq.lines <- nrow(moq.constraints)
 
-  lp <- ROI::OP(objective = profit,
-           constraints = ROI::L_constraint(L = rbind(volume, moq.constraints),
-                                      dir = c("<=", rep(">=", moq.lines)),
-                                      rhs = c(cap, rep(0, moq.lines))),
-           maximum = TRUE,
-           types = rep("B", length(volume)))
+  lp <- ROI::OP(
+    objective = profit,
+    constraints = ROI::L_constraint(
+      L = rbind(volume, moq.constraints),
+      dir = c("<=", rep(">=", moq.lines)),
+      rhs = c(cap, rep(0, moq.lines))
+    ),
+    maximum = TRUE,
+    types = rep("B", length(volume))
+  )
 
   mod <- ROI::ROI_solve(lp, solver, control = control)
   res <- mod$solution
-  res[is.na(res)] <- 0;
+  res[is.na(res)] <- 0
   res <- as.integer(round(res, 0))
-  res[res >= 2] <- 0; # Values should be between 0 and 1
+  res[res >= 2] <- 0 # Values should be between 0 and 1
   res
 }
 
