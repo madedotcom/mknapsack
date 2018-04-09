@@ -19,10 +19,8 @@ Suggests:
   testthat,
   mockery,
   Rglpk,
-  rcbc,
   ROI,
-  ROI.plugin.glpk,
-  ROI.plugin.cbc
+  ROI.plugin.glpk
 Imports:
   assertthat,
   data.table,
