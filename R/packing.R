@@ -148,17 +148,36 @@ knapsack.lpsolve <- function(profit, volume, moq, cap) {
 #' @seealso https://github.com/dirkschumacher/rcbc
 #' @seealso https://github.com/dirkschumacher/ROI.plugin.cbc
 knapsack.cbc <- function(profit, volume, moq, cap) {
+  n <- length(profit)
+
+  if (sum(volume) <= cap) {
+    return(rep(1, n))
+  }
+
+  moq.constraints <- moq_constraint(moq)
+  moq.lines <- nrow(moq.constraints)
+
   # CBC solver produces out-of-bound solution if coefs are zero.
   volume[volume == 0] <- 1e-10
-  arguments <- as.list(environment())
-  arguments <- append(
-    arguments,
-    list(
-      solver = "cbc",
-      control = list(logLevel = 0, sec = 60)
-    )
-  )
-  do.call(knapsack.roi, arguments)
+
+
+  result <- cbc_solve(
+    obj = profit,
+    mat = rbind(volume, moq.constraints),
+    is_integer = rep.int(TRUE, n),
+    row_lb = c(0L, rep(0L, moq.lines)),
+    row_ub = c(cap, rep(1L, moq.lines)),
+    max = TRUE,
+    col_lb = rep.int(0L, n),
+    col_ub = rep.int(1L, n),
+    cbc_args = list(logLevel = 0, Sec = 1));
+
+  print(rcbc::solution_status(result))
+  res <- rcbc::column_solution(result)
+  res[is.na(res)] <- 0;
+  res[res >= 2] <- 0; # Values should be between 0 and 1
+  res <- as.integer(round(res, 0))
+  return(res)
 }
 
 #' Solve knapsack problem with glpk
