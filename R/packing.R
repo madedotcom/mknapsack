@@ -160,6 +160,7 @@ knapsack.cbc <- function(profit, volume, moq, cap) {
   # CBC solver produces out-of-bound solution if coefs are zero.
   volume[volume == 0] <- 1e-10
 
+
   result <- cbc_solve(
     obj = profit,
     mat = rbind(volume, moq.constraints),
@@ -249,6 +250,5 @@ moq_constraint <- function(moq) {
   res[is.na(res)] <- 0
   res <- subset(res, subset = moq != 1L)
   if (nrow(res) == 0) return(res)
-  res <- res[rowSums(res == 0) != ncol(res), ]
-  return(res)
+  res[rowSums(res == 0) != ncol(res), , drop = FALSE]
 }
